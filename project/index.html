@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Health Chat Helper — AI Clinical & Wellness Assistant</title>
+    <meta
+      name="description"
+      content="Conversational AI clinical assistant powered by DeepSeek-V4.1-Flash on River AI, grounded in NIH MedlinePlus and FDA Drug monographs."
+    />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+    <link rel="apple-touch-icon" href="icons/icon.svg" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell" aria-label="Health advice chatbot">
+      <section class="chat-panel">
+        <!-- Top App Bar -->
+        <header class="chat-header">
+          <div class="header-brand">
+            <div class="brand-icon-wrapper" aria-hidden="true">
+              <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 7v6m-3-3h6" stroke="white" stroke-width="2.5" />
+              </svg>
+            </div>
+            <div class="brand-titles">
+              <div class="brand-title-row">
+                <h1>Health Chat Helper</h1>
+                <span class="version-tag">v2.2 AI</span>
+              </div>
+              <p class="eyebrow">DeepSeek-V4.1-Flash • NIH & FDA Grounded</p>
+            </div>
+          </div>
+
+          <div class="header-actions">
+            <div id="status-pill" class="status-pill" title="Connected to River AI and verified clinical databases">
+              <span class="status-dot"></span>
+              <span class="status-text">DeepSeek + NIH & FDA</span>
+            </div>
+
+            <button id="theme-toggle" class="icon-action-btn" type="button" aria-label="Toggle dark/light mode" title="Toggle theme">
+              <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="5" />
+                <path stroke-linecap="round" d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+              </svg>
+              <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+            </button>
+
+            <button id="export-summary-btn" class="icon-action-btn" type="button" aria-label="Export consultation for doctor" title="Export Doctor Summary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                <rect x="6" y="14" width="12" height="8" rx="1" />
+              </svg>
+            </button>
+
+            <a class="nav-btn dashboard-link" href="dashboard.html" title="View saved records on this device">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="9" rx="1" />
+                <rect x="14" y="3" width="7" height="5" rx="1" />
+                <rect x="14" y="12" width="7" height="9" rx="1" />
+                <rect x="3" y="16" width="7" height="5" rx="1" />
+              </svg>
+              <span class="btn-label">Dashboard</span>
+            </a>
+
+            <button id="new-chat" class="nav-btn new-chat-button" type="button" title="Start a fresh conversation">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14" />
+              </svg>
+              <span class="btn-label">New Chat</span>
+            </button>
+
+            <button id="install-app" class="nav-btn install-app-button" type="button" hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+              </svg>
+              <span class="btn-label">Install</span>
+            </button>
+          </div>
+        </header>
+
+        <!-- Emergency & Clinical Notice Banner -->
+        <div class="emergency-guideline-bar" role="alert">
+          <div class="notice-icon">⚠️</div>
+          <div class="notice-content">
+            <strong>Emergency Reminder:</strong> For sudden chest pain, breathing difficulty, stroke signs (face drooping, arm weakness), severe bleeding, or overdose, call <strong>911 / 112</strong> immediately.
+          </div>
+          <button id="dismiss-notice" class="notice-dismiss-btn" type="button" aria-label="Dismiss notice">✕</button>
+        </div>
+
+        <!-- Live Clinical Context Strip -->
+        <div class="clinical-context-strip">
+          <div class="context-item topic-item">
+            <span class="context-icon">🩺</span>
+            <span class="context-label">Focus:</span>
+            <strong id="dashboard-topic" class="context-value">General Health</strong>
+          </div>
+          <div class="context-item triage-item">
+            <span class="context-label">Triage:</span>
+            <span id="dashboard-priority" class="dashboard-pill dashboard-stable">Ready</span>
+          </div>
+          <div class="context-item turns-item">
+            <span class="context-label">Turns:</span>
+            <span id="dashboard-progress" class="dashboard-progress">0 turns</span>
+          </div>
+          <div class="context-divider"></div>
+          <div class="context-badges">
+            <span class="badge-pill">✓ NIH MedlinePlus</span>
+            <span class="badge-pill">✓ FDA Monographs</span>
+          </div>
+        </div>
+
+        <!-- Chat Stream Area -->
+        <div id="messages" class="messages" aria-live="polite"></div>
+
+        <!-- Quick Topic Suggestion Chips -->
+        <div class="quick-actions-container">
+          <div class="quick-actions-header">
+            <span class="quick-actions-title">Common Health Topics:</span>
+          </div>
+          <div class="quick-actions" aria-label="Example health topics">
+            <button type="button" data-prompt="I have a headache. What should I do?">
+              <span class="chip-emoji">🤕</span> Headache
+            </button>
+            <button type="button" data-prompt="I have a fever. What should I watch for?">
+              <span class="chip-emoji">🌡️</span> Fever & Chills
+            </button>
+            <button type="button" data-prompt="I have a cough and cold symptoms. What should I do?">
+              <span class="chip-emoji">🤧</span> Cough & Cold
+            </button>
+            <button type="button" data-prompt="I have stomach pain and nausea. What can help?">
+              <span class="chip-emoji">🤢</span> Stomach Pain
+            </button>
+            <button type="button" data-prompt="Can you explain safe over-the-counter medicine options and precautions?">
+              <span class="chip-emoji">💊</span> OTC Medicine
+            </button>
+            <button type="button" data-prompt="I am having trouble sleeping. What evidence-based steps can I take?">
+              <span class="chip-emoji">🌙</span> Sleep Health
+            </button>
+            <button type="button" data-prompt="I have lower back pain after lifting something heavy. What should I do?">
+              <span class="chip-emoji">⚡</span> Back Pain
+            </button>
+            <button type="button" data-prompt="Give me simple, science-backed nutrition advice for more daily energy.">
+              <span class="chip-emoji">🥗</span> Nutrition
+            </button>
+          </div>
+        </div>
+
+        <!-- Modern Composer Dock -->
+        <form id="chat-form" class="composer" autocomplete="off">
+          <div class="composer-inner">
+            <label class="sr-only" for="message-input">Type your health question</label>
+            <textarea
+              id="message-input"
+              name="message"
+              rows="1"
+              enterkeyhint="send"
+              placeholder="Ask about symptoms, medication safety, self-care, first aid..."
+              required
+            ></textarea>
+
+            <div class="composer-actions">
+              <button id="voice-input-btn" class="composer-icon-btn" type="button" aria-label="Speak your question" title="Voice input (dictation)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8" />
+                </svg>
+              </button>
+
+              <button id="clear-input-btn" class="composer-icon-btn" type="button" aria-label="Clear input text" title="Clear text" hidden>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+
+              <button id="send-button" type="submit" aria-label="Send message" title="Send message (Enter)">
+                <span class="send-label">Send</span>
+                <svg class="send-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M3.4 20.4 21 12 3.4 3.6 3 10.2 14 12 3 13.8l.4 6.6Z" />
+                </svg>
+                <div class="spinner-icon" hidden aria-hidden="true"></div>
+              </button>
+            </div>
+          </div>
+          <div class="composer-footer-hint">
+            <span>Powered by <strong>DeepSeek-V4.1-Flash</strong> & River AI • Grounded by <strong>NIH & FDA</strong></span>
+            <span class="shortcut-hint">↵ Send • Shift+↵ New line</span>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <!-- Doctor Consultation Summary Modal -->
+    <div id="summary-modal" class="modal-overlay" hidden>
+      <div class="modal-container" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <h2 id="modal-title">Clinical Consultation Summary</h2>
+            <p class="modal-subtitle">Formatted for review with your physician, nurse, or pharmacist</p>
+          </div>
+          <button id="close-modal-btn" class="modal-close-btn" type="button" aria-label="Close dialog">✕</button>
+        </div>
+        <div id="modal-body" class="modal-body">
+          <!-- Populated dynamically by JavaScript -->
+        </div>
+        <div class="modal-footer">
+          <button id="print-summary-btn" class="modal-primary-btn" type="button">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+              <rect x="6" y="14" width="12" height="8" rx="1" />
+            </svg>
+            Print / Save as PDF
+          </button>
+          <button id="dismiss-modal-btn" class="modal-secondary-btn" type="button">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification Element -->
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>
