@@ -1,0 +1,39 @@
+# Only the app is pushed: apps/web (frontend), supabase/ (backend: migrations, functions, tests, config),
+# packages/shared, scripts/, and the workspace files. Everything below stays on this computer.
+
+# Dependencies and build output (rebuilt by `npm install` and `npm run build`)
+node_modules/
+.next/
+out/
+dist/
+coverage/
+*.tsbuildinfo
+# Next.js writes this on every dev run and build; `npm run typecheck` makes it with `next typegen`
+next-env.d.ts
+
+# Secrets: never commit. .env.example (placeholders only) is the one env file that is pushed.
+.env
+.env.*
+!.env.example
+
+# Local links and tool state (Vercel project link, Supabase CLI link)
+.vercel/
+supabase/.temp/
+supabase/.branches/
+
+# Kept on this computer only (founder, 2026-10-21): the product plan and the design spec
+PLAN.md
+DESIGN.md
+
+# Decks, exports and backups
+*.pptx
+*.key
+*.pdf
+backup-*.zip
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/

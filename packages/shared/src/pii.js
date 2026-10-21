@@ -1,0 +1,128 @@
+// Removes personal identifiers from a message before it leaves the device.
+// Each identifier becomes a placeholder like [PHONE_1]; the mapping stays in
+// memory on the device so replies can show the real value again.
+
+const RULES = [
+  { type: "EMAIL", pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}" },
+  { type: "ID", pattern: "\\b[a-z0-9._-]+@(?:abdm|sbx)\\b" },
+  { type: "PHONE", pattern: "(?<![\\d+])(?:\\+?91[\\s-]?|0)?[6-9]\\d{4}[\\s-]?\\d{5}(?!\\d)" },
+  { type: "PHONE", pattern: "\\+\\d{1,3}[\\s-]?\\(?\\d{1,4}\\)?(?:[\\s-]?\\d{2,5}){2,4}(?!\\d)" },
+  // Landlines: 0, the STD code, then the number ("011 2345 6789", "080-23456789").
+  { type: "PHONE", pattern: "(?<![\\d+.])0\\d{2,4}[\\s-]?\\d{3,4}[\\s-]?\\d{4}(?!\\d)" },
+  // ID numbers: one unbroken run of 9 to 18 digits, or Aadhaar/ABHA/card-style groups of four. Not any digits that
+  // happen to sit together: "sugars 110 120 135 140" or "BP 140 90 138 88" are readings (bug review 2026-10-20).
+  { type: "ID", pattern: "(?<!\\d)(?:\\d{9,18}|\\d{4}[\\s-]\\d{4}[\\s-]\\d{4}(?:[\\s-]\\d{4})?|\\d{2}[\\s-]\\d{4}[\\s-]\\d{4}[\\s-]\\d{4})(?!\\d)" },
+  { type: "ID", pattern: "\\b[a-z]{5}\\d{4}[a-z]\\b" },
+];
+
+const NAME_CUES = [
+  "\\bmy\\s+name\\s+is\\s+",
+  "\\bmy\\s+name's\\s+",
+  "\\bmera\\s+naam\\s+",
+  "मेरा\\s+नाम\\s+",
+];
+const NAME_STOP_WORDS = new Set([
+  "and", "i", "i'm", "im", "am", "is", "hai", "he", "she", "aur", "my", "from", "here", "age", "aged",
+  "है", "हूँ", "हूं", "हैं", "और", "में", "मे", "से", "को", "का", "की", "के", "मैं", "मुझे", "था", "थी",
+]);
+// After the first word of a name, only words that look like more of a name: capitalised, or Devanagari (which has no
+// capitals; its stop words above end the name). "my name is Ravi having chest pain" hides "Ravi", not "Ravi having
+// chest" (bug review 2026-10-20).
+const LATER_NAME_WORD = new RegExp("^(?:[A-Z][A-Za-z'.-]*|[\\u0900-\\u097f]+)$");
+const NAME_WORD = new RegExp("^[a-z\\u0900-\\u097f][a-z\\u0900-\\u097f'.-]*$", "i");
+
+export function createRedactionMap() {
+  return { byValue: new Map(), byPlaceholder: new Map(), counters: {} };
+}
+
+function placeholderFor(map, type, value) {
+  const key = `${type}:${value.toLowerCase()}`;
+  if (map.byValue.has(key)) {
+    return map.byValue.get(key);
+  }
+  map.counters[type] = (map.counters[type] || 0) + 1;
+  const placeholder = `[${type}_${map.counters[type]}]`;
+  map.byValue.set(key, placeholder);
+  map.byPlaceholder.set(placeholder, value);
+  return placeholder;
+}
+
+function escapeRegex(text) {
+  return text.replace(new RegExp("[.*+?^${}()|[\\]\\\\]", "g"), "\\$&");
+}
+
+function findCuedNames(text) {
+  const names = [];
+  for (const cue of NAME_CUES) {
+    const regex = new RegExp(cue + "([^\\s,.!?;:]+(?:\\s+[^\\s,.!?;:]+){0,2})", "gi");
+    let match = regex.exec(text);
+    while (match) {
+      const words = [];
+      for (const word of match[1].split(new RegExp("\\s+"))) {
+        if (NAME_STOP_WORDS.has(word.toLowerCase()) || !NAME_WORD.test(word)) {
+          break;
+        }
+        if (words.length && !LATER_NAME_WORD.test(word)) {
+          break;
+        }
+        words.push(word);
+      }
+      if (words.length) {
+        names.push(words.join(" "));
+      }
+      match = regex.exec(text);
+    }
+  }
+  return names;
+}
+
+/**
+ * Replaces emails, phone numbers, ID numbers and names with placeholders.
+ * `neverSend` is the user's own list of names to always hide.
+ * Returns { text, found: [{ type, placeholder }] } — `found` never contains the original values.
+ */
+export function redact(input, { neverSend = [], map = createRedactionMap() } = {}) {
+  let text = String(input || "");
+  const found = [];
+  const note = (type, placeholder) => {
+    if (!found.some((item) => item.placeholder === placeholder)) {
+      found.push({ type, placeholder });
+    }
+  };
+
+  for (const rule of RULES) {
+    text = text.replace(new RegExp(rule.pattern, "gi"), (value) => {
+      if (new RegExp("^\\[[A-Z]+_\\d+\\]$").test(value)) {
+        return value;
+      }
+      const placeholder = placeholderFor(map, rule.type, value.trim());
+      note(rule.type, placeholder);
+      return placeholder;
+    });
+  }
+
+  // Longest first, so "Asha Kulkarni" is hidden as one name before "Asha" alone is replaced inside it.
+  const names = [...new Set([...findCuedNames(text), ...neverSend.map((name) => String(name).trim()).filter((name) => name.length > 1)])].sort(
+    (a, b) => b.length - a.length
+  );
+  for (const name of names) {
+    const regex = new RegExp(`(^|[^\\p{L}\\p{N}])(${escapeRegex(name)})(?=$|[^\\p{L}\\p{N}])`, "giu");
+    text = text.replace(regex, (whole, before, value) => {
+      const placeholder = placeholderFor(map, "NAME", value);
+      note("NAME", placeholder);
+      return before + placeholder;
+    });
+  }
+
+  return { text, found };
+}
+
+/** Puts the real values back into text that came back from the server. */
+export function restore(text, map) {
+  if (!text || !map || !map.byPlaceholder.size) {
+    return text;
+  }
+  return String(text).replace(new RegExp("\\[(?:EMAIL|PHONE|ID|NAME)_\\d+\\]", "g"), (placeholder) => {
+    return map.byPlaceholder.get(placeholder) || placeholder;
+  });
+}

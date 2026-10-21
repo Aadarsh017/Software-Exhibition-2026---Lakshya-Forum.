@@ -1,0 +1,882 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ */
+/* Design tokens: DESIGN.md Appendix A. The single source of truth.    */
+/* ------------------------------------------------------------------ */
+:root {
+  color-scheme: light;
+
+  /* Primitives */
+  --p-paper: #F7F3EB;  --p-paper-sunk: #EFE9DD;  --p-white: #FFFFFF;
+  --p-ink: #1A1C1E;    --p-ink-muted: #55524C;   --p-ink-faint: #6B675F;
+  --p-coral: #FE976C;  --p-lilac: #EDA5E7;  --p-mint: #69CFA5;
+  --p-butter: #FFF387; --p-sky: #ABEDFF;    --p-grape: #B698F8;  --p-blush: #FFEAD8;
+  --p-deep-green: #0B5A46;  --p-alert: #B42318;  --p-alert-soft: #FEE4E2;
+
+  /* Surfaces and text */
+  --paper: var(--p-paper);        --paper-sunk: var(--p-paper-sunk);   --card: var(--p-white);
+  --ink: var(--p-ink);            --ink-muted: var(--p-ink-muted);     --ink-faint: var(--p-ink-faint);
+  --ink-inverse: var(--p-paper);
+  --line: var(--p-ink);           --hairline: rgb(26 28 30 / 0.14);
+  --shadow: var(--p-ink);         --highlight: var(--p-butter);
+
+  /* Blocks (large areas) and what sits on them */
+  --block-coral: var(--p-coral);  --block-lilac: var(--p-lilac);   --block-mint: var(--p-mint);
+  --block-butter: var(--p-butter); --block-sky: var(--p-sky);      --block-grape: var(--p-grape);
+  --block-blush: var(--p-blush);  --on-block: var(--p-ink);
+
+  /* Accents (small things) and what sits on them */
+  --accent-coral: var(--p-coral); --accent-lilac: var(--p-lilac);  --accent-mint: var(--p-mint);
+  --accent-butter: var(--p-butter); --accent-sky: var(--p-sky);    --accent-grape: var(--p-grape);
+  --on-accent: var(--p-ink);
+
+  /* Status */
+  --deep-green: var(--p-deep-green);
+  --alert: var(--p-alert);  --on-alert: #FFFFFF;  --alert-soft: var(--p-alert-soft);  --alert-text: var(--p-alert);
+
+  /* Care levels (5 = most urgent) */
+  --care-5-bg: var(--alert);        --care-5-fg: var(--on-alert);  --care-5-edge: var(--line);
+  --care-4-bg: var(--block-coral);  --care-4-fg: var(--on-block);  --care-4-edge: var(--line);
+  --care-3-bg: var(--block-butter); --care-3-fg: var(--on-block);  --care-3-edge: var(--line);
+  --care-2-bg: var(--block-sky);    --care-2-fg: var(--on-block);  --care-2-edge: var(--line);
+  --care-1-bg: var(--block-mint);   --care-1-fg: var(--on-block);  --care-1-edge: var(--line);
+
+  /* Shape */
+  --bw: 2px;  --bw-2: 2.5px;  --bw-3: 3px;
+  --r-xs: 4px;  --r-sm: 10px;  --r-md: 14px;  --r-lg: 20px;  --r-pill: 999px;
+  --shadow-press: 1px 1px 0 var(--shadow);
+  --shadow-sm:    2px 2px 0 var(--shadow);
+  --shadow-md:    3px 3px 0 var(--shadow);
+  --shadow-card:  4px 4px 0 var(--shadow);
+  --shadow-float: 5px 6px 0 var(--shadow);
+
+  /* Layout */
+  --w-prose: 66ch; --w-content: 1040px; --w-wide: 1200px; --w-chat: 760px; --rail: 288px;
+
+  /* Type (next/font supplies --font-fraunces and --font-inter) */
+  --font-display-stack: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-body-stack: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-hand-stack: var(--font-caveat), "Bradley Hand", "Segoe Print", cursive;
+  --text-display: clamp(2.5rem, 1.4rem + 4.6vw, 4.5rem);
+  --text-h1: clamp(2.125rem, 1.5rem + 2.4vw, 3.25rem);
+  --text-h2: clamp(1.875rem, 1.3rem + 1.8vw, 2.75rem);
+  --text-h3: clamp(1.5rem, 1.25rem + 0.9vw, 1.75rem);
+  --text-body-lg: clamp(1.125rem, 1.07rem + 0.25vw, 1.25rem);
+  --text-body: 1.0625rem;  --text-ui: 1rem;  --text-small: 0.875rem;
+
+  /* Motion */
+  --dur-press: 90ms; --dur-hover: 120ms; --dur-reveal: 280ms; --dur-sheet: 220ms;
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (prefers-contrast: more) {
+  :root { --bw: 2px; --bw-2: 3px; --bw-3: 4px; }
+}
+
+/* Tailwind utilities read the tokens (bg-paper, text-ink, border-line, font-display …) */
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-sunk: var(--paper-sunk);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-line: var(--line);
+  --color-coral: var(--accent-coral);
+  --color-lilac: var(--accent-lilac);
+  --color-mint: var(--accent-mint);
+  --color-butter: var(--accent-butter);
+  --color-sky: var(--accent-sky);
+  --color-grape: var(--accent-grape);
+  --color-alert: var(--alert);
+  --color-deep-green: var(--deep-green);
+  --font-display: var(--font-display-stack);
+  --font-sans: var(--font-body-stack);
+}
+
+/* ------------------------------------------------------------------ */
+/* Base                                                                */
+/* ------------------------------------------------------------------ */
+@layer base {
+  /* touch-action: no double-tap zoom (the viewport turns off pinch zoom; see app/layout.tsx). */
+  html { -webkit-text-size-adjust: 100%; touch-action: manipulation; }
+  /* Text size setting (S / M / L / XL). Every font size is in rem, so this scales all text (DESIGN.md 9). */
+  html[data-text-size="s"] { font-size: 93.75%; }
+  html[data-text-size="l"] { font-size: 112.5%; }
+  html[data-text-size="xl"] { font-size: 125%; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body-stack);
+    font-size: var(--text-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 150ms, color 150ms;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display-stack);
+    /* Bold and black (DESIGN.md 5.1, 8.3): the page name is the strongest thing on the screen. */
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    font-optical-sizing: auto;
+    font-variation-settings: "SOFT" 40;
+  }
+  p { text-wrap: pretty; }
+  a { text-underline-offset: 3px; text-decoration-thickness: 2px; }
+  :focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  ::placeholder { color: var(--ink-faint); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Components: hard outlines, hard shadows, no blur (DESIGN.md 6.3, 7) */
+/* ------------------------------------------------------------------ */
+@layer components {
+  .wrap { max-width: var(--w-content); margin-inline: auto; padding-inline: clamp(16px, 4vw, 32px); }
+  .wrap-wide { max-width: var(--w-wide); }
+  .section { padding-block: clamp(56px, 9vw, 112px); }
+
+  .display { font-size: var(--text-display); line-height: 1.04; letter-spacing: -0.025em; }
+  .h2 { font-size: var(--text-h2); line-height: 1.12; }
+  .lead { font-size: var(--text-body-lg); line-height: 1.55; color: var(--ink-muted); }
+  .eyebrow {
+    font-size: 0.7812rem; line-height: 1.3; font-weight: 650; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink-muted);
+  }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 44px; padding: 0 20px; white-space: nowrap;
+    border: var(--bw) solid var(--line); border-radius: var(--r-sm);
+    background: var(--card); color: var(--ink);
+    font: 600 1rem/1 var(--font-body-stack);
+    box-shadow: var(--shadow-md); cursor: pointer; text-decoration: none;
+    transition: transform var(--dur-press), box-shadow var(--dur-press);
+  }
+  .btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--shadow); }
+  .btn:active { transform: translate(2px, 2px); box-shadow: var(--shadow-press); }
+  .btn:disabled, .btn[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-primary { background: var(--accent-coral); color: var(--on-accent); }
+  .btn-mint { background: var(--accent-mint); color: var(--on-accent); }
+  .btn-ink { background: var(--ink); color: var(--ink-inverse); }
+  .btn-lg { min-height: 52px; padding: 0 26px; font-size: 1.0625rem; }
+  .btn-emergency {
+    background: #fff; color: var(--alert); min-height: 64px; width: 100%;
+    border: 3px solid #fff; font-size: 1.1875rem; box-shadow: 0 4px 0 rgb(0 0 0 / 0.35);
+  }
+  .btn-ghost-on-red { background: transparent; color: #fff; border-color: #fff; box-shadow: none; }
+
+  .pill-emergency {
+    display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; white-space: nowrap;
+    border: 2px solid var(--alert-text); border-radius: var(--r-pill); color: var(--alert-text);
+    font: 650 0.9375rem/1 var(--font-body-stack); text-decoration: none;
+  }
+  .chip {
+    display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px;
+    border: var(--bw) solid var(--line); border-radius: var(--r-pill); background: var(--card); color: var(--ink);
+    font: 600 0.9375rem/1 var(--font-body-stack); cursor: pointer; box-shadow: var(--shadow-sm);
+  }
+  .chip:hover { transform: translate(-1px, -1px); box-shadow: var(--shadow-md); }
+  .chip:active { transform: translate(2px, 2px); box-shadow: var(--shadow-press); }
+  .src-pill {
+    display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px;
+    border: var(--bw) solid var(--line); border-radius: var(--r-pill); background: var(--card); color: var(--ink);
+    font: 600 0.875rem/1 var(--font-body-stack); box-shadow: var(--shadow-sm);
+  }
+  .src-pill-soon { border-style: dashed; color: var(--ink-muted); box-shadow: none; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent-mint); border: 2px solid var(--line); display: inline-block; }
+
+  .card {
+    background: var(--card); color: var(--ink);
+    border: var(--bw) solid var(--line); border-radius: var(--r-md); box-shadow: var(--shadow-card);
+  }
+  .field {
+    width: 100%; min-height: 48px; padding: 0 14px;
+    border: var(--bw) solid var(--line); border-radius: var(--r-sm);
+    background: var(--card); color: var(--ink); font: 400 1.0625rem var(--font-body-stack);
+    /* Never under 16px, or iPhones zoom in when the box is tapped (the Small text size would make it 15.9px). */
+    font-size: max(16px, 1.0625rem);
+  }
+  .field-label { display: block; margin-bottom: 6px; font-weight: 650; font-size: 0.9375rem; }
+
+  /* Colour blocks with a hand-cut edge */
+  .block { position: relative; color: var(--on-block); }
+  .block-coral { background: var(--block-coral); }
+  .edge { position: absolute; left: 0; right: 0; height: 14px; background: var(--paper); }
+  .edge-top { top: -1px; }
+  .edge-bottom { bottom: -1px; transform: scaleY(-1); }
+
+  /* Floating doodle cards (landing hero) */
+  .float {
+    position: absolute; width: 230px; padding: 12px 14px; text-align: left; font-size: 0.875rem; line-height: 1.4;
+    background: var(--card); border: var(--bw) solid var(--line); border-radius: var(--r-md); box-shadow: var(--shadow-float);
+  }
+
+  /* Result panels (safety demo) */
+  .res { border: var(--bw) solid var(--line); border-radius: var(--r-md); padding: 16px 18px; }
+  .res-calm { background: var(--block-sky); color: var(--on-block); }
+  .res-flag { background: var(--alert); color: #fff; border: 3px solid var(--alert); }
+  .res-flag h3 { color: #fff; font-size: 1.75rem; }
+  .res-crisis { background: var(--block-lilac); color: var(--on-block); }
+  .res .btn { margin-top: 12px; }
+
+  /* Check lists from the reference: problem squares and solution checks */
+  .box { flex: 0 0 22px; height: 22px; margin-top: 3px; border: var(--bw) solid var(--line); border-radius: 4px; display: grid; place-items: center; font-size: 0.875rem; font-weight: 700; }
+  .box-bad { box-shadow: inset 0 0 0 4px var(--block-lilac); }
+  .box-ok { background: var(--accent-mint); color: var(--on-accent); }
+
+  .skip-link { position: absolute; left: -999px; top: 8px; z-index: 50; background: var(--card); padding: 8px 12px; border: var(--bw) solid var(--line); border-radius: var(--r-sm); }
+  .skip-link:focus { left: 8px; }
+}
+
+/* ------------------------------------------------------------------ */
+/* Chat screen (DESIGN.md 7.3, 7.6, 7.7, 8.4)                          */
+/* ------------------------------------------------------------------ */
+@layer components {
+  .chat-col { width: 100%; max-width: var(--w-chat); margin-inline: auto; padding-inline: clamp(12px, 3vw, 20px); }
+
+  .bubble-user {
+    margin-left: auto; max-width: 80%; padding: 10px 14px; background: var(--block-blush); color: var(--on-block);
+    border: var(--bw) solid var(--line); border-radius: 14px 14px 4px 14px; white-space: pre-wrap; overflow-wrap: anywhere;
+  }
+
+  .answer { background: var(--card); border: var(--bw) solid var(--line); border-radius: var(--r-md); box-shadow: var(--shadow-card); overflow: hidden; }
+  .answer-body { padding: 16px 18px 18px; display: grid; gap: 14px; }
+  .answer h3 { font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem); line-height: 1.25; }
+  .answer h4 { font: 700 0.9375rem/1.3 var(--font-body-stack); letter-spacing: 0; margin-bottom: 6px; }
+  .answer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 7px; }
+  .answer li { position: relative; padding-left: 18px; }
+  .answer li::before { content: ""; position: absolute; left: 3px; top: 0.62em; width: 6px; height: 6px; border-radius: 50%; background: var(--ink); }
+
+  .care-band { display: grid; gap: 4px; padding: 12px 16px; border-bottom: var(--bw) solid var(--line); }
+  .care-band-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .care-label { font: 700 1.0625rem/1.2 var(--font-body-stack); }
+  .care-dots { display: inline-flex; gap: 4px; margin-left: auto; }
+  .care-dots i { width: 11px; height: 11px; border-radius: 50%; border: 2px solid currentColor; display: block; }
+  .care-dots i.on { background: currentColor; }
+  .care-note { font-size: 0.9062rem; line-height: 1.4; opacity: 0.95; }
+
+  .alert-block { background: var(--alert-soft); color: var(--ink); border: var(--bw) solid var(--alert-text); border-radius: var(--r-sm); padding: 12px 14px; }
+  .alert-block h4 { color: var(--alert-text); display: flex; align-items: center; gap: 8px; }
+  .alert-block li::before { background: var(--alert-text); }
+  /* Self-harm conversations stay calm: no red (DESIGN.md 7.7) */
+  .alert-block[data-calm="true"] { background: var(--block-lilac); color: var(--on-block); border-color: var(--line); }
+  .alert-block[data-calm="true"] h4 { color: var(--on-block); }
+  .alert-block[data-calm="true"] li::before { background: var(--on-block); }
+
+  .marker {
+    display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 5px; margin-left: 4px;
+    border: var(--bw) solid var(--line); border-radius: var(--r-xs); background: var(--card); color: var(--ink); cursor: pointer;
+    font: 700 0.75rem/1 var(--font-body-stack); vertical-align: 1px;
+  }
+  .marker:hover { background: var(--accent-butter); color: var(--p-ink); }
+  .general-pill {
+    display: inline-flex; align-items: center; margin-left: 6px; padding: 1px 8px; border: 2px dashed var(--ink-muted); border-radius: var(--r-pill);
+    color: var(--ink-muted); font: 600 0.75rem/1.5 var(--font-body-stack); vertical-align: 1px; white-space: nowrap;
+  }
+
+  .followup { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 14px; border: var(--bw) solid var(--line); border-radius: var(--r-pill); background: var(--card); color: var(--ink); font: 600 0.9375rem/1.25 var(--font-body-stack); cursor: pointer; text-align: left; box-shadow: var(--shadow-sm); }
+  .followup::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--accent-lilac); border: 2px solid var(--line); flex: none; }
+  .followup:hover { transform: translateY(-1px); }
+
+  .action-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .action { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 12px; border: var(--bw) solid var(--line); border-radius: var(--r-sm); background: var(--card); color: var(--ink); font: 600 0.875rem/1 var(--font-body-stack); cursor: pointer; }
+  .action:hover { background: var(--paper-sunk); }
+  .action[aria-pressed="true"] { background: var(--ink); color: var(--ink-inverse); }
+
+  .stepper { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .stepper li { display: flex; align-items: center; gap: 10px; font-size: 0.9375rem; padding: 0; }
+  .stepper li::before { display: none; }
+  .step-icon { width: 22px; height: 22px; flex: none; display: grid; place-items: center; border-radius: 50%; border: var(--bw) solid var(--line); background: var(--card); font-size: 0.8125rem; font-weight: 800; }
+  .step-done .step-icon { background: var(--accent-mint); color: var(--p-ink); }
+  .step-failed .step-icon { background: var(--alert-soft); color: var(--alert-text); border-color: var(--alert-text); }
+  .step-pending { color: var(--ink-faint); }
+  .step-pending .step-icon { border-style: dashed; }
+  .spinner { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--ink); border-right-color: transparent; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .skeleton { background: var(--paper-sunk); border: 2px dashed var(--hairline); border-radius: var(--r-sm); animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: 0.55; } }
+
+  .banner { padding: 10px 14px; border: var(--bw) solid var(--line); border-radius: var(--r-sm); background: var(--block-butter); color: var(--on-block); font-size: 0.9375rem; }
+  .error-card { padding: 14px 16px; border: var(--bw) solid var(--alert-text); border-radius: var(--r-md); background: var(--alert-soft); color: var(--ink); }
+  .calm-card { padding: 14px 16px; border: var(--bw) solid var(--line); border-radius: var(--r-md); background: var(--block-sky); color: var(--on-block); }
+
+  /* Composer */
+  .composer-wrap { flex: none; background: var(--paper); padding: 6px 0 max(10px, env(safe-area-inset-bottom)); }
+  .composer { display: flex; align-items: flex-end; gap: 8px; padding: 8px 8px 8px 14px; background: var(--card); border: var(--bw) solid var(--line); border-radius: var(--r-md); box-shadow: var(--shadow-md); }
+  .composer textarea { flex: 1; min-height: 44px; max-height: 40dvh; resize: none; border: 0; outline: 0; background: transparent; color: var(--ink); font: 400 1.0625rem/1.5 var(--font-body-stack); font-size: max(16px, 1.0625rem); padding: 10px 0; }
+  .composer:focus-within { outline: 3px solid var(--ink); outline-offset: 2px; }
+  .send { width: 48px; height: 48px; flex: none; display: grid; place-items: center; border: var(--bw) solid var(--line); border-radius: var(--r-sm); background: var(--accent-coral); color: var(--p-ink); box-shadow: var(--shadow-sm); cursor: pointer; }
+  .send:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+  .send.stop { background: var(--card); color: var(--ink); }
+
+  /* Dialogs: native <dialog>, so focus is trapped and Esc works (DESIGN.md 7.5) */
+  dialog.sheet { padding: 0; border: 0; background: transparent; max-width: none; max-height: none; width: 100%; height: 100%; margin: 0; color: var(--ink); overflow: auto; }
+  dialog.sheet::backdrop { background: rgb(26 28 30 / 0.55); }
+  .sheet-alert { min-height: 100%; background: var(--alert); color: #fff; padding: clamp(20px, 5vw, 40px) clamp(16px, 5vw, 32px); display: grid; align-content: start; gap: 14px; }
+  .sheet-calm { min-height: 100%; background: var(--paper); color: var(--ink); padding: clamp(20px, 5vw, 40px) clamp(16px, 5vw, 32px); display: grid; align-content: center; gap: 14px; }
+  @media (min-width: 720px) {
+    dialog.sheet-center { width: min(640px, 92vw); height: auto; max-height: 92dvh; margin: auto; border: 3px solid #fff; border-radius: var(--r-md); }
+    dialog.sheet-center.calm { border: var(--bw) solid var(--line); box-shadow: var(--shadow-float); }
+    dialog.sheet-center .sheet-alert, dialog.sheet-center .sheet-calm { min-height: 0; }
+  }
+  dialog.drawer { width: 100%; height: auto; max-height: 86dvh; margin: auto 0 0; border-radius: 16px 16px 0 0; background: var(--card); border: var(--bw) solid var(--line); }
+  @media (min-width: 900px) {
+    dialog.drawer { width: 440px; height: 100%; max-height: 100%; margin: 0 0 0 auto; border-radius: 0; border-width: 0 0 0 var(--bw); }
+  }
+  .drawer-body { padding: 18px 18px 28px; display: grid; gap: 14px; }
+  .source-item { border: var(--bw) solid var(--line); border-radius: var(--r-sm); padding: 12px 14px; background: var(--paper); display: grid; gap: 8px; }
+  .source-item[data-flash="true"] { background: var(--accent-butter); color: var(--p-ink); }
+  .quote { margin: 0; padding: 8px 12px; border-left: 4px solid var(--accent-mint); background: var(--card); font-size: 0.9375rem; }
+
+  .jump { position: absolute; right: 14px; bottom: 12px; z-index: 25; }
+  .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+}
+
+/* Onboarding (DESIGN.md 8.3, 7.4, 7.10) */
+@layer components {
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--ink-inverse); }
+  .chip-remove { margin-left: 2px; font-weight: 800; }
+  .step-dots { display: inline-flex; gap: 6px; }
+  .step-dots i { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--line); display: block; background: transparent; }
+  .step-dots i.on { background: var(--ink); }
+  .toggle { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; cursor: pointer; font-weight: 600; }
+  .toggle-track { position: relative; width: 52px; height: 32px; border: var(--bw) solid var(--line); border-radius: var(--r-pill); background: var(--card); flex: none; }
+  .toggle-track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: var(--ink); transition: transform var(--dur-hover); }
+  .toggle input:checked + .toggle-track { background: var(--accent-mint); }
+  .toggle input:checked + .toggle-track::after { transform: translateX(20px); background: var(--p-ink); }
+  .toggle input:focus-visible + .toggle-track { outline: 3px solid var(--ink); outline-offset: 3px; }
+}
+
+/* Site navigation: a rounded bar of rounded buttons (the sketch's style, in our colours) */
+@layer components {
+  .nav-capsule {
+    display: flex; align-items: center; gap: 4px; padding: 5px;
+    background: var(--card); border: var(--bw) solid var(--line); border-radius: var(--r-pill); box-shadow: var(--shadow-md);
+  }
+  @media (min-width: 400px) { .nav-capsule { gap: 8px; padding: 6px; } }
+  @media (min-width: 640px) { .nav-capsule { gap: 12px; padding: 7px 8px; } }
+  .nav-pill {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 10px;
+    border: var(--bw) solid var(--line); border-radius: var(--r-pill); background: var(--paper); color: var(--ink);
+    font: 650 0.875rem/1 var(--font-body-stack); text-decoration: none; white-space: nowrap;
+    transition: transform var(--dur-press), background-color var(--dur-hover);
+  }
+  @media (min-width: 400px) { .nav-pill { padding: 0 14px; font-size: 0.9375rem; } }
+  @media (min-width: 640px) { .nav-pill { padding: 0 20px; } }
+  .nav-pill:hover { background: var(--accent-butter); color: var(--p-ink); }
+  .nav-pill:active { transform: translateY(1px); }
+  .nav-pill-primary { background: var(--accent-coral); color: var(--on-accent); }
+  .nav-pill-primary:hover { background: var(--accent-coral); filter: brightness(0.96); }
+  .nav-pill-emergency { background: transparent; border-color: var(--alert-text); color: var(--alert-text); }
+  .nav-pill-emergency:hover { background: var(--alert-soft); color: var(--alert-text); }
+}
+
+/* App pages: history rail, confirm dialogs, settings (DESIGN.md 7.8, 8.6) */
+@layer components {
+  .btn-danger { background: var(--alert); color: #fff; border-color: var(--alert); }
+  dialog.confirm {
+    width: min(480px, calc(100% - 32px)); height: auto; max-height: calc(100dvh - 32px); margin: auto; padding: 0;
+    background: var(--card); color: var(--ink); border: var(--bw) solid var(--line); border-radius: var(--r-md); box-shadow: var(--shadow-float);
+  }
+  dialog.confirm::backdrop { background: rgb(26 28 30 / 0.55); }
+  dialog.drawer-left {
+    width: min(340px, 92vw); height: 100%; max-height: 100%; margin: 0 auto 0 0; padding: 0; overflow: auto;
+    background: var(--paper); color: var(--ink); border: 0; border-right: var(--bw) solid var(--line);
+  }
+  dialog.drawer-left::backdrop { background: rgb(26 28 30 / 0.55); }
+  dialog.drawer-left[open] { display: flex; flex-direction: column; background: var(--paper-sunk); }
+  .rail { position: sticky; top: 0; height: 100vh; height: 100dvh; overflow-y: auto; border-right: var(--bw) solid var(--line); background: var(--paper); }
+  .history-item { display: flex; align-items: stretch; gap: 4px; border-radius: var(--r-sm); }
+  .history-item:hover, .history-item[data-current="true"] { background: var(--paper-sunk); }
+  .history-item[data-current="true"] { box-shadow: inset 3px 0 0 var(--ink); }
+  .history-open { flex: 1; min-width: 0; display: grid; gap: 2px; padding: 8px 10px; text-align: left; background: transparent; border: 0; color: var(--ink); cursor: pointer; border-radius: var(--r-sm); }
+  .history-title { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .history-menu > summary { list-style: none; cursor: pointer; display: grid; place-items: center; width: 40px; height: 40px; margin-top: 2px; border-radius: var(--r-sm); font-weight: 800; }
+  .history-menu > summary::-webkit-details-marker { display: none; }
+  .history-menu > summary:hover { background: var(--card); }
+  .history-menu[open] > div { position: absolute; right: 8px; z-index: 30; display: grid; min-width: 140px; padding: 6px; background: var(--card); border: var(--bw) solid var(--line); border-radius: var(--r-sm); box-shadow: var(--shadow-md); }
+  .menu-item { text-align: left; padding: 10px 12px; min-height: 44px; border-radius: var(--r-xs); background: transparent; border: 0; color: var(--ink); font-weight: 600; cursor: pointer; }
+  .menu-item:hover { background: var(--paper-sunk); }
+  .urgent-tag { display: inline-flex; align-items: center; gap: 4px; width: fit-content; padding: 0 6px; border: 2px solid var(--alert-text); border-radius: var(--r-pill); color: var(--alert-text); font-size: 0.75rem; font-weight: 700; line-height: 1.5; }
+  .settings-section { display: grid; gap: 16px; padding: 20px; }
+  @media (min-width: 640px) { .settings-section { padding: 24px; } }
+}
+
+/* Doctor summary: one component for the screen and the printed A4 page (DESIGN.md 8.7) */
+@layer components {
+  .doc { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; padding: clamp(18px, 4vw, 36px); min-width: 0; overflow-wrap: anywhere; }
+  .doc h2 { font: 700 1rem/1.3 var(--font-body-stack); letter-spacing: 0; text-transform: none; margin: 0 0 6px; }
+  .doc-title { font-size: clamp(1.6rem, 1.3rem + 1.2vw, 2.1rem); line-height: 1.15; margin: 0; }
+  .doc ul { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+  .doc table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .doc td { padding: 6px 8px 6px 0; vertical-align: top; border-bottom: 1px solid var(--hairline); }
+  .doc td:first-child { width: 34%; font-weight: 600; }
+  .doc-lines { display: grid; gap: 18px; }
+  .doc-lines span { display: block; border-bottom: 1px solid var(--ink-faint); height: 1.2em; }
+  .doc-foot { border-top: 2px solid var(--line); padding-top: 10px; font-size: 0.875rem; color: var(--ink-muted); }
+}
+
+@media print {
+  @page { size: A4; margin: 16mm; }
+  .no-print, nextjs-portal { display: none !important; }
+  html, body { background: #fff !important; color: #000 !important; }
+  .doc { border: 0 !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; color: #000; background: #fff; font-size: 11pt; }
+  .doc section { break-inside: avoid; }
+  .doc td { border-bottom: 0.75pt solid #999; }
+  .doc-foot { color: #333; border-top: 0.75pt solid #000; }
+  main { padding: 0 !important; max-width: none !important; }
+}
+
+/* Chat layout v2: sidebar, centred welcome, pill composer (founder's reference, in our theme) */
+@layer components {
+  .rail { position: sticky; top: 0; height: 100vh; height: 100dvh; width: 288px; flex: none; overflow: hidden; display: flex; flex-direction: column; border-right: var(--bw) solid var(--line); background: var(--paper-sunk); }
+  .side-icon { display: grid; place-items: center; width: 36px; height: 36px; border-radius: var(--r-sm); border: 0; background: transparent; color: var(--ink); cursor: pointer; }
+  .side-icon:hover { background: var(--card); }
+  .nav-row { display: flex; align-items: center; gap: 12px; min-height: 42px; padding: 0 12px; border-radius: var(--r-sm); border: var(--bw) solid transparent; background: transparent; color: var(--ink); font: 600 0.96875rem/1.2 var(--font-body-stack); text-decoration: none; cursor: pointer; text-align: left; width: 100%; }
+  .nav-row:hover { background: var(--card); }
+  .nav-row-primary { background: var(--card); border-color: var(--line); box-shadow: var(--shadow-md); }
+  .nav-row .tile { width: 32px; height: 32px; border-radius: 8px; }
+  /* Not a button: a row that only tells you something (the iPhone install hint, DESIGN.md 7.8) */
+  .nav-row-static { cursor: default; padding-block: 4px; }
+  .nav-row-static:hover { background: transparent; }
+  .nav-row-hint { font: 500 0.8125rem/1.3 var(--font-body-stack); color: var(--ink-muted); }
+  .nav-row-primary:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--shadow); }
+  .nav-row-primary:active { transform: translate(2px, 2px); box-shadow: var(--shadow-press); }
+  .recents-label { margin: 0; padding: 0 12px; font: 650 0.875rem/1.3 var(--font-body-stack); color: var(--ink-muted); }
+  .history-item:hover { background: var(--card); }
+  .history-item[data-current="true"] { background: var(--accent-butter); box-shadow: var(--shadow-sm); border: var(--bw) solid var(--line); border-radius: var(--r-sm); }
+  .history-open { padding: 9px 12px; }
+  .history-title { font-weight: 500; }
+  .account-block { display: grid; gap: 10px; padding: 12px; border-top: var(--bw) solid var(--hairline); }
+  .avatar { width: 36px; height: 36px; flex: none; display: grid; place-items: center; border-radius: 50%; border: var(--bw) solid var(--line); background: var(--accent-lilac); color: var(--p-ink); font: 700 0.875rem/1 var(--font-body-stack); }
+
+  .composer { border-radius: 28px; padding: 6px 6px 6px 20px; align-items: flex-end; }
+  .composer:focus-within { outline: 3px solid var(--ink); outline-offset: 2px; }
+  .send { width: 44px; height: 44px; border-radius: 50%; }
+  .welcome { flex: 1; display: grid; align-content: center; justify-items: center; gap: 18px; padding: 20px 16px 28px; }
+  .welcome-title { margin: 0; text-align: center; font-weight: 800; font-size: clamp(1.75rem, 1.35rem + 1.6vw, 2.5rem); line-height: 1.2; }
+  .topic-grid > li { display: contents; }
+  .topic-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px; margin: 0; padding: 0; list-style: none; }
+  @media (min-width: 640px) { .topic-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px 14px; } }
+  /* Short screens: the lower cards, then Nox and the nudge, step aside so nothing needs scrolling */
+  @media (max-height: 640px) and (min-width: 640px) { .topic-grid > li:nth-child(n+4) { display: none; } }
+  @media (max-height: 760px) and (max-width: 639px) { .topic-grid > li:nth-child(n+5) { display: none; } }
+  /* Nox stays on phones (founder, 2026-10-20: "why is it not visible on the phone"), just smaller on shorter screens;
+     only a very short screen hides it. */
+  @media (max-height: 780px) and (max-width: 639px) { .welcome-nox { width: 2.75rem; height: 3.5rem; } }
+  @media (max-height: 700px) { .nudge { display: none; } }
+  @media (max-height: 600px) { .welcome-nox { display: none; } }
+}
+
+/* App frames: the page never scrolls; the content area inside does (DESIGN.md 8.3, "No page scroll") */
+@layer components {
+  /* 100vh first: browsers without dvh (older in-app browsers, e.g. opened from WhatsApp) still get a full-height frame. */
+  .app-frame { display: flex; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; }
+  /* position: relative makes this the containing block for hidden (sr-only) text and other absolutely placed bits inside, so they cannot make the page itself scroll */
+  .app-scroll { position: relative; flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+}
+@media print {
+  .app-frame { display: block; height: auto; overflow: visible; }
+  .app-scroll { overflow: visible; }
+}
+
+/* Tuckii-style pieces (DESIGN.md 8.3, "What we learned from Tuckii"): icon buttons, coloured tiles, row cards, folder-tab topic cards, the highlight pill */
+@layer components {
+  .icon-btn {
+    display: grid; place-items: center; width: 44px; height: 44px; flex: none;
+    border: var(--bw) solid var(--line); border-radius: var(--r-sm); background: var(--card); color: var(--ink);
+    box-shadow: var(--shadow-sm); cursor: pointer; text-decoration: none;
+    transition: transform var(--dur-press), box-shadow var(--dur-press);
+  }
+  .icon-btn:hover { transform: translate(-1px, -1px); box-shadow: var(--shadow-md); }
+  .icon-btn:active { transform: translate(2px, 2px); box-shadow: var(--shadow-press); }
+
+  /* A coloured square with an icon. The colour says what kind of thing it is (data-tone). */
+  .tile {
+    display: grid; place-items: center; width: 40px; height: 40px; flex: none;
+    border: var(--bw) solid var(--line); border-radius: var(--r-sm); background: var(--tone, var(--accent-coral)); color: var(--ink);
+  }
+  .tile[data-tone="coral"] { --tone: var(--accent-coral); }
+  .tile[data-tone="lilac"] { --tone: var(--accent-lilac); }
+  .tile[data-tone="mint"] { --tone: var(--accent-mint); }
+  .tile[data-tone="butter"] { --tone: var(--accent-butter); }
+  .tile[data-tone="sky"] { --tone: var(--accent-sky); }
+  .tile[data-tone="grape"] { --tone: var(--accent-grape); }
+  .tile[data-tone="paper"] { --tone: var(--paper-sunk); }
+
+  /* One row grammar everywhere: tile, bold title, quiet line, then a chevron or a switch */
+  .row-card {
+    display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 12px; text-align: left;
+    border: var(--bw) solid var(--line); border-radius: var(--r-md); background: var(--card); color: var(--ink);
+    box-shadow: var(--shadow-md); text-decoration: none; cursor: pointer; font: inherit;
+    transition: transform var(--dur-press), box-shadow var(--dur-press);
+  }
+  a.row-card:hover, button.row-card:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--shadow); }
+  a.row-card:active, button.row-card:active { transform: translate(2px, 2px); box-shadow: var(--shadow-press); }
+  .row-card[data-ring="true"] { outline: 3px solid var(--accent-butter); outline-offset: 3px; }
+  .row-title { margin: 0; font: 700 1rem/1.25 var(--font-body-stack); }
+  .row-sub { margin: 0; font-size: 0.875rem; line-height: 1.3; color: var(--ink-muted); }
+  .section-label { margin: 0; padding: 0 4px; font: 700 0.75rem/1.3 var(--font-body-stack); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); }
+
+  /* A topic card with a folder tab: tab and tile share a colour */
+  .topic {
+    --tone: var(--accent-coral);
+    position: relative; display: grid; align-content: space-between; gap: 14px; min-height: 112px; padding: 12px; margin-top: 14px;
+    border: var(--bw) solid var(--line); border-radius: var(--r-md); background: var(--card); color: var(--ink);
+    box-shadow: var(--shadow-md); text-align: left; text-decoration: none; cursor: pointer; font: inherit;
+    transition: transform var(--dur-press), box-shadow var(--dur-press);
+  }
+  .topic::before {
+    content: ""; position: absolute; left: 14px; top: -12px; width: 62px; height: 12px;
+    border: var(--bw) solid var(--line); border-bottom: 0; border-radius: 8px 8px 0 0; background: var(--tone);
+  }
+  .topic:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--shadow); }
+  .topic:active { transform: translate(2px, 2px); box-shadow: var(--shadow-press); }
+  .topic[data-tone="coral"] { --tone: var(--accent-coral); }
+  .topic[data-tone="lilac"] { --tone: var(--accent-lilac); }
+  .topic[data-tone="mint"] { --tone: var(--accent-mint); }
+  .topic[data-tone="butter"] { --tone: var(--accent-butter); }
+  .topic[data-tone="sky"] { --tone: var(--accent-sky); }
+  .topic[data-tone="grape"] { --tone: var(--accent-grape); }
+  .topic-title { margin: 0; font: 700 1rem/1.2 var(--font-body-stack); }
+  .topic-sub { margin: 0; font-size: 0.8125rem; line-height: 1.2; color: var(--ink-muted); text-align: right; }
+
+  /* One phrase of a heading on a tilted white pill */
+  .hl {
+    display: inline-block; padding: 0 0.3em; margin-inline: 0.04em; transform: rotate(-1.6deg);
+    border: var(--bw) solid var(--line); border-radius: var(--r-md); background: var(--card); box-shadow: var(--shadow-md);
+  }
+}
+
+@layer components {
+  /* The account card on top of Settings, like a plan card: a colour block with the mascot */
+  .settings-hero {
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding: 20px;
+    border: var(--bw) solid var(--line); border-radius: var(--r-md); background: var(--block-butter); color: var(--on-block); box-shadow: var(--shadow-card);
+  }
+}
+
+/* The phone's slide-out sidebar: never scrolls sideways, slides in, leaves some dark area to tap, respects the home bar */
+@layer components {
+  .account-block { grid-template-columns: minmax(0, 1fr); padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+  dialog.drawer-left { width: min(340px, 86vw); overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; }
+  dialog.drawer-left[open] { animation: drawer-in var(--dur-sheet) var(--ease-out); }
+  dialog.drawer-left[open]::backdrop { animation: backdrop-in var(--dur-sheet) ease-out; }
+  @keyframes drawer-in { from { transform: translateX(-100%); } to { transform: none; } }
+  @keyframes backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+}
+
+/* Chat v3, minimal (DESIGN.md 7.6): the answer is text on the paper; colour only for care level, emergencies and sources */
+@layer components {
+  .bubble-user { max-width: 78%; padding: 10px 16px; border: 0; border-radius: 20px 20px 6px 20px; background: var(--block-blush); line-height: 1.5; }
+
+  .answer { background: transparent; border: 0; border-radius: 0; box-shadow: none; overflow: visible; max-width: 68ch; }
+  .answer-body { padding: 0; gap: 16px; }
+  .answer h3 { font-size: clamp(1.1875rem, 1.08rem + 0.45vw, 1.375rem); line-height: 1.3; font-weight: 800; }
+  .answer h4 { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; font: 650 0.9688rem/1.3 var(--font-body-stack); }
+  .answer ul { gap: 8px; }
+  .answer li { padding-left: 16px; line-height: 1.55; }
+  .answer li::before { left: 2px; top: 0.66em; width: 5px; height: 5px; background: var(--ink-muted); }
+
+  /* The care level, as a strip above the answer: still colour, icon, words, dots and border weight */
+  .answer .care-band { border-radius: var(--r-md); padding: 10px 14px; margin-bottom: 16px; }
+  .answer .care-label { font-size: 1rem; }
+  .answer .care-note { font-size: 0.8438rem; }
+
+  .alert-block { border-radius: var(--r-md); padding: 12px 14px 14px; }
+
+  .marker { min-width: 19px; height: 19px; padding: 0 4px; margin-left: 5px; border-width: 1.5px; border-radius: 6px; font-size: 0.6875rem; vertical-align: 2px; }
+  .general-tag { padding: 1px 8px; border-radius: var(--r-pill); background: var(--paper-sunk); color: var(--ink-muted); font: 600 0.7188rem/1.5 var(--font-body-stack); letter-spacing: 0.01em; }
+  .general-note { margin-left: 6px; color: var(--ink-faint); font-size: 0.8125rem; white-space: nowrap; }
+
+  .followup { min-height: 40px; padding: 6px 14px; border: 1.5px solid var(--hairline); background: var(--card); box-shadow: none; font-weight: 550; }
+  .followup::before { width: 7px; height: 7px; border-width: 1.5px; }
+  .followup:hover { transform: none; border-color: var(--line); }
+
+  .src-chip {
+    display: inline-flex; align-items: center; gap: 6px; max-width: 100%; min-height: 32px; padding: 0 10px 0 4px;
+    border: 1.5px solid var(--hairline); border-radius: var(--r-pill); background: var(--card); color: var(--ink);
+    font: 600 0.8125rem/1 var(--font-body-stack); text-decoration: none;
+  }
+  .src-chip:hover { border-color: var(--line); }
+  .src-chip svg { flex: none; color: var(--ink-muted); }
+  .src-num { display: grid; place-items: center; min-width: 22px; height: 22px; padding: 0 5px; border-radius: var(--r-pill); background: var(--accent-mint); font-size: 0.6875rem; font-weight: 800; }
+  .text-link { padding: 4px 6px; border: 0; background: none; color: var(--ink); font: 600 0.8125rem/1.2 var(--font-body-stack); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+
+  .answer-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; margin-left: -8px; }
+  .icon-ghost { display: grid; place-items: center; width: 36px; height: 36px; border: 0; border-radius: var(--r-sm); background: transparent; color: var(--ink-muted); cursor: pointer; }
+  .icon-ghost:hover { background: var(--paper-sunk); color: var(--ink); }
+  .icon-ghost[aria-pressed="true"] { background: var(--ink); color: var(--ink-inverse); }
+  .checked { margin-left: 6px; }
+  .checked[open] { flex-basis: 100%; margin-left: 8px; }
+
+  .live-line { display: inline-flex; align-items: center; gap: 10px; color: var(--ink-muted); font-size: 0.9375rem; }
+  .answer .skeleton { border: 0; background: var(--paper-sunk); border-radius: var(--r-pill); }
+
+  /* "Not saved" is a slim line, not a box */
+  .save-off { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 0; padding: 6px 12px; color: var(--ink-muted); font-size: 0.8125rem; text-align: center; }
+  .save-off a { color: var(--ink); font-weight: 600; }
+
+  /* The message box, lighter */
+  .composer { box-shadow: var(--shadow-sm); }
+}
+
+/* Home topic cards, compact (DESIGN.md 7.6, chat v3): coloured tile and title in one row, no folder tab */
+@layer components {
+  .topic { display: flex; align-items: center; align-content: normal; gap: 12px; min-height: 58px; padding: 8px 12px 8px 8px; margin-top: 0; box-shadow: var(--shadow-sm); }
+  .topic::before { display: none; }
+  .topic:hover { box-shadow: var(--shadow-md); }
+  .topic .tile { width: 38px; height: 38px; }
+  .topic-title { font-size: 0.9688rem; line-height: 1.25; }
+  .topic-grid { gap: 10px; }
+  @media (min-width: 640px) { .topic-grid { gap: 10px 12px; } }
+}
+
+@layer components {
+  /* "Jump to latest": a small round arrow, centred above the message box */
+  .jump { left: 50%; right: auto; bottom: 10px; width: 38px; height: 38px; border-radius: 50%; transform: translateX(-50%); }
+  .jump:hover { transform: translate(-50%, -1px); }
+  .jump:active { transform: translate(-50%, 1px); }
+}
+
+@layer components {
+  /* Focus on the message box: a soft ring plus a deeper shadow, still clearly visible, never the heavy black double line */
+  .composer:focus-within { outline: 2px solid color-mix(in srgb, var(--ink) 22%, transparent); outline-offset: 3px; box-shadow: var(--shadow-md); }
+}
+
+/* Personalization (DESIGN.md 8.6b) */
+@layer components {
+  .person-hero {
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding: 18px 20px;
+    border: var(--bw) solid var(--line); border-radius: var(--r-md); background: var(--block-lilac); color: var(--on-block); box-shadow: var(--shadow-card);
+  }
+  .progress { position: relative; display: inline-block; width: 96px; height: 10px; border: var(--bw) solid var(--line); border-radius: var(--r-pill); background: var(--card); overflow: hidden; }
+  .progress i { position: absolute; inset: 0 auto 0 0; background: var(--accent-mint); }
+  .save-bar { position: sticky; bottom: 0; z-index: 2; padding: 12px 0 max(12px, env(safe-area-inset-bottom)); background: var(--paper); border-top: 1.5px solid var(--hairline); }
+  .flag-chip { display: inline-flex; align-items: center; padding: 1px 9px; border: 1.5px solid var(--line); border-radius: var(--r-pill); font: 700 0.75rem/1.5 var(--font-body-stack); background: var(--accent-mint); }
+  .flag-chip[data-flag="low"], .flag-chip[data-flag="high"] { background: var(--accent-butter); }
+  .lab-line { display: grid; grid-template-columns: minmax(0, 1fr) 96px 92px; align-items: center; gap: 8px; }
+  .lab-line .field { min-height: 44px; padding: 0 10px; }
+  .lab-unit { font-size: 0.875rem; }
+  @media (max-width: 380px) { .lab-line { grid-template-columns: minmax(0, 1fr) 80px 84px; } }
+}
+
+@layer components {
+  /* An everyday medicine Nox suggested from its checked list (DESIGN.md 8.6b) */
+  .otc-tag { display: inline-flex; align-items: center; margin: 0 2px; padding: 0 8px; border-radius: var(--r-pill); background: var(--accent-mint); color: var(--on-accent); font: 700 0.7188rem/1.6 var(--font-body-stack); vertical-align: 1px; white-space: nowrap; }
+}
+
+@layer components {
+  /* The sidebar's two account buttons: the account action, and Emergency beside it */
+  .btn-compact { min-height: 44px; padding: 0 10px; font-size: 0.9375rem; gap: 6px; }
+  .btn-alert { color: var(--alert-text); border-color: var(--alert-text); }
+  .btn-alert:hover { background: var(--alert-soft); }
+}
+
+/* Health diary (DESIGN.md 8.6c) */
+@layer components {
+  .diary-hero { padding: 18px 20px; border: var(--bw) solid var(--line); border-radius: var(--r-md); background: var(--block-sky); color: var(--on-block); box-shadow: var(--shadow-card); }
+  .feel-btn { min-height: 52px; font-size: 1.0625rem; }
+  .feel-btn[data-tone="mint"] { background: var(--accent-mint); }
+  .feel-btn[data-tone="butter"] { background: var(--accent-butter); }
+  .feel-btn[data-tone="coral"] { background: var(--accent-coral); }
+  .flag-chip[data-flag="high"] { background: var(--accent-coral); }
+}
+
+@layer components {
+  .checkin { padding: 14px; border: var(--bw) solid var(--line); border-radius: var(--r-md); background: var(--card); box-shadow: var(--shadow-md); }
+  @media (max-height: 700px) { .checkin { display: none; } }
+}
+
+@layer components {
+  /* The Today card (DESIGN.md 8.6e): medicines due now and today's reading, one card, rows like notebook lines */
+  /* min-width 0: the rows hold medicine names on one line, which must never widen the column (8.3, "Slide-out sidebar") */
+  .today { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; min-width: 0; padding: 8px 14px 12px; border: var(--bw) solid var(--line); border-radius: var(--r-md); background: var(--card); box-shadow: var(--shadow-md); }
+  .today-list { display: grid; grid-template-columns: minmax(0, 1fr); margin: 0; padding: 0; list-style: none; }
+  .today-row { display: flex; align-items: center; gap: 10px; min-width: 0; min-height: 46px; border-top: 1.5px solid var(--hairline); color: var(--ink); text-decoration: none; }
+  .taken-btn { flex: none; min-width: 92px; min-height: 40px; }
+  .taken-btn[aria-pressed="true"] { background: var(--accent-mint); color: var(--on-accent); }
+  .today-link:hover strong { text-decoration: underline; text-underline-offset: 3px; }
+  .today-go { display: inline-flex; flex: none; align-items: center; font-weight: 650; }
+  .today-more { justify-self: start; min-height: 32px; padding: 0; border: 0; background: none; color: var(--ink); font: 600 0.9375rem/1.2 var(--font-body-stack); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .today-note { font-size: 0.875rem; line-height: 1.35; color: var(--ink-muted); }
+  .tile-sm { width: 30px; height: 30px; }
+  /* With the card, Nox (decoration) steps aside on phones and on screens up to 900 px tall, and the phone page tightens;
+     a tall card (four rows or more) keeps one row of topic cards, so the home screen still fits one frame */
+  @media (max-width: 639px), (max-height: 900px) { .welcome[data-today] .welcome-nox { width: 2.5rem; height: 3.1rem; } }
+  @media (max-height: 640px) { .welcome[data-today] .welcome-nox { display: none; } }
+  @media (max-width: 639px) { .welcome[data-today] { gap: 14px; padding-top: 12px; padding-bottom: 16px; } }
+  @media (max-height: 900px) and (max-width: 639px) { .welcome[data-today="tall"] .topic-grid > li:nth-child(n+3) { display: none; } }
+  @media (max-height: 900px) and (min-width: 640px) { .welcome[data-today="tall"] .topic-grid > li:nth-child(n+4) { display: none; } }
+
+  /* A medicine's times in Health history (DESIGN.md 8.6e) */
+  .med-times { display: grid; gap: 8px; padding-top: 10px; border-top: 1.5px dashed var(--hairline); }
+  .pills-field { width: 64px; min-height: 40px; padding: 0 8px; text-align: center; }
+}
+
+@layer components {
+  /* "Find … near you" (DESIGN.md 8.6c) */
+  .near-link { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; color: var(--ink); font: 600 0.9062rem/1.2 var(--font-body-stack); text-decoration: underline; text-underline-offset: 3px; }
+  .near-link svg { color: var(--alert-text); flex: none; }
+}
+
+@layer components {
+  /* The emergency card (DESIGN.md 8.6c): high contrast, big type, to show a responder */
+  .ice-card { padding: 18px 20px; border: 3px solid var(--alert); border-radius: var(--r-md); background: var(--card); color: var(--ink); }
+  .ice-label { margin: 0; color: var(--alert-text); font: 800 0.8125rem/1.3 var(--font-body-stack); letter-spacing: 0.08em; text-transform: uppercase; }
+  .ice-name { margin: 2px 0 10px; font: 800 1.5rem/1.2 var(--font-display-stack); overflow-wrap: anywhere; }
+  .ice-list { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; margin: 0; font-size: 1.0625rem; }
+  .ice-list dt { font-weight: 700; }
+  .ice-list dd { margin: 0; overflow-wrap: anywhere; }
+  @media (max-width: 380px) { .ice-list { grid-template-columns: minmax(0, 1fr); gap: 2px; } .ice-list dd { margin-bottom: 6px; } }
+}
+
+@layer components {
+  /* The answer never grows wider than its column: long words and links wrap */
+  .answer, .answer-body { min-width: 0; }
+  .answer-body { grid-template-columns: minmax(0, 1fr); }
+  .answer p, .answer li { overflow-wrap: anywhere; }
+}
+
+/* Short pages sit in the middle (DESIGN.md 8.3): the scroll area is a flex column, so a page's m-auto centres it when
+   there is room and starts it at the top when there isn't. The conversation and the printed summary keep reading from
+   the top (they don't use m-auto). */
+@layer components {
+  .app-scroll { display: flex; flex-direction: column; }
+}
+@media print {
+  .app-scroll { display: block; }
+}
+
+/* Margin notes (DESIGN.md 8.3): the quiet sentences that explain a page, handwritten beside a coral margin line like a
+   notebook's. Each word is revealed left to right in turn, like a pen, once, when the page opens. */
+@layer components {
+  .margin-note { position: relative; margin: 0; padding: 1px 0 3px 14px; border-left: 2px solid var(--accent-coral); color: var(--ink); font: 500 1.3125rem/1.28 var(--font-hand-stack); letter-spacing: 0.005em; text-align: left; text-wrap: pretty; }
+  .margin-note[data-align="center"] { width: fit-content; max-width: min(100%, 34ch); margin-inline: auto; }
+  .margin-note .mn-line { display: block; }
+  .margin-note .mn-line + .mn-line { margin-top: 4px; }
+  .margin-note .mn-quiet { font-size: 1.125rem; color: var(--ink-muted); }
+  .margin-note .mn-lock { display: inline-block; width: 0.8em; height: 0.8em; margin-right: 5px; vertical-align: -0.05em; }
+  .margin-note .mn-w { display: inline-block; clip-path: inset(-0.3em 100% -0.4em -0.2em); animation: mn-write var(--t, 120ms) linear var(--d, 0ms) forwards; }
+  .margin-note .mn-pen { display: inline-block; width: 0.9em; margin-left: 3px; opacity: 0; vertical-align: -0.1em; animation: mn-pen 1100ms ease-out var(--d, 0ms) forwards; pointer-events: none; }
+}
+@keyframes mn-write { to { clip-path: inset(-0.3em -0.2em -0.4em -0.2em); } }
+@keyframes mn-pen {
+  0% { opacity: 0; transform: translate(-6px, 2px) rotate(-10deg); }
+  20%, 60% { opacity: 0.85; transform: translate(0, 0) rotate(0); }
+  100% { opacity: 0; transform: translate(6px, -6px) rotate(12deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .margin-note .mn-w { clip-path: none; animation: none; }
+  .margin-note .mn-pen { display: none; }
+}
+@media print {
+  .margin-note .mn-w { clip-path: none; animation: none; }
+  .margin-note .mn-pen { display: none; }
+}
+
+/* Short choices as an even grid (DESIGN.md 8.3: a page fits its frame) */
+@layer components {
+  .chip-strip { display: grid; grid-template-columns: repeat(var(--cols, 5), minmax(0, 1fr)); gap: 6px; }
+  @media (min-width: 640px) { .chip-strip[data-wide] { grid-template-columns: repeat(var(--cols-wide), minmax(0, 1fr)); } }
+  .chip-strip .chip { justify-content: center; min-width: 0; min-height: 40px; padding: 0 4px; border-radius: var(--r-sm); text-align: center; line-height: 1.1; }
+  /* One list per line, like lines in a notebook; only the open one shows its suggestions and input */
+  .list-line { display: grid; gap: 6px; padding: 10px 0 12px; border-bottom: 1.5px solid var(--hairline); }
+  .list-line:last-child { border-bottom: 0; }
+}
+
+/* Sidebar search: the line a match was found in (DESIGN.md 8.5) */
+@layer components {
+  .history-snippet { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; color: var(--ink-muted); font-size: 0.8125rem; line-height: 1.35; }
+}
+
+/* Home readings (DESIGN.md 8.6d): what one reading means, coloured by its band, and the matching flags */
+@layer components {
+  .flag-chip[data-flag="normal"] { background: var(--accent-mint); }
+  .flag-chip[data-flag="raised"] { background: var(--accent-butter); }
+  .flag-chip[data-flag="urgent"] { background: var(--alert); border-color: var(--alert); color: var(--on-alert); }
+  .reading-result { display: grid; gap: 6px; padding: 12px 14px; border: var(--bw) solid var(--line); border-radius: var(--r-md); background: var(--card); box-shadow: var(--shadow-sm); }
+  .reading-result[data-band="normal"] { background: color-mix(in srgb, var(--accent-mint) 35%, var(--card)); }
+  .reading-result[data-band="raised"], .reading-result[data-band="low"] { background: color-mix(in srgb, var(--accent-butter) 45%, var(--card)); }
+  .reading-result[data-band="high"] { background: color-mix(in srgb, var(--accent-coral) 30%, var(--card)); }
+  .reading-result[data-band="urgent"] { background: var(--alert-soft); border-color: var(--alert); }
+}
+
+/* First aid on the emergency page (DESIGN.md 7.7a): plain, white on red, one tap to open */
+@layer components {
+  .first-aid { border: 2px solid rgb(255 255 255 / 0.6); border-radius: var(--r-md); padding: 12px 14px; color: #fff; }
+  .first-aid[open] { background: rgb(0 0 0 / 0.12); }
+  .first-aid summary { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 12px; min-height: 44px; cursor: pointer; list-style: none; }
+  .first-aid summary::-webkit-details-marker { display: none; }
+  .first-aid summary > span { grid-column: 1; }
+  .first-aid summary::after { content: "+"; grid-column: 2; grid-row: 1 / span 2; font: 700 1.5rem/1 var(--font-body-stack); }
+  .first-aid[open] summary::after { content: "−"; }
+  .first-aid summary:focus-visible { outline: 3px solid #fff; outline-offset: 4px; border-radius: 4px; }
+}
+
+/* Nox's questions for the person (founder, 2026-10-19): a calm list; a tap starts the answer, it never sends */
+@layer components {
+  .ask-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .answer .ask-list > li { padding-left: 0; }
+  .answer .ask-list > li::before { content: none; }
+  .ask-row { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 48px; padding: 10px 14px; border: 1.5px solid var(--hairline); border-radius: var(--r-md); background: var(--card); color: var(--ink); font: 500 0.9688rem/1.35 var(--font-body-stack); text-align: left; cursor: pointer; }
+  .ask-row:hover { border-color: var(--line); }
+  .ask-row:disabled { opacity: 0.6; cursor: default; }
+  .ask-cta { flex: none; padding: 2px 10px; border: 1.5px solid var(--line); border-radius: var(--r-pill); background: var(--accent-lilac); font: 700 0.8125rem/1.5 var(--font-body-stack); }
+  .reply-to { display: flex; align-items: flex-start; gap: 8px; margin: 0 4px 8px; padding: 8px 12px; border-left: 3px solid var(--accent-lilac); border-radius: var(--r-sm); background: var(--paper-sunk); color: var(--ink); font-size: 0.875rem; line-height: 1.4; }
+}
+
+/* What Nox used for an answer (DESIGN.md 8.6f): one quiet line above the actions */
+@layer components {
+  .used-line { margin: 0; color: var(--ink-muted); font-size: 0.8125rem; line-height: 1.4; }
+}
+
+/* "Add to your profile?" under an answer (DESIGN.md 8.6f) */
+@layer components {
+  .profile-proposal { display: grid; gap: 8px; padding: 12px 14px; border: 1.5px solid var(--line); border-radius: var(--r-md); background: color-mix(in srgb, var(--accent-lilac) 22%, var(--card)); }
+  .proposal-row { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: var(--r-sm); background: var(--card); border: 1.5px solid var(--hairline); }
+  .answer .proposal-row::before, .answer .profile-proposal li::before { content: none; }
+  .answer .profile-proposal li { padding-left: 10px; }
+}
+
+/* Full-screen heights with a fallback (founder, 2026-10-19: login "not in the middle" on the phone). Browsers that don't
+   know dvh drop that line and keep 100vh, instead of losing the height and stacking everything at the top. */
+@layer utilities {
+  .screen-h { height: 100vh; height: 100dvh; }
+  .min-screen-h { min-height: 100vh; min-height: 100dvh; }
+}
+
+/* Thali: the water counter (DESIGN.md 8.6g) */
+@layer components {
+  .water-step { display: grid; place-items: center; width: 44px; height: 44px; flex: none; border: var(--bw) solid var(--line); border-radius: var(--r-sm); background: var(--card); color: var(--ink); font: 800 1.375rem/1 var(--font-body-stack); box-shadow: var(--shadow-sm); cursor: pointer; }
+  .water-step:disabled { opacity: 0.45; cursor: default; box-shadow: none; }
+  .water-card { gap: 10px; }
+}
+
+/* Doctor summaries on a phone (founder, 2026-10-19: "the text goes out of the box"). The two-column tables stack: the
+   when or the label on top, quieter, the text under it. Paper keeps the columns (print styles are separate). */
+@media screen and (max-width: 560px) {
+  .doc table, .doc tbody, .doc tr, .doc td { display: block; width: 100%; }
+  .doc tr { padding: 8px 0; border-bottom: 1px solid var(--hairline); }
+  .doc td { border-bottom: 0; padding: 0; }
+  .doc td:first-child { width: auto; margin-bottom: 2px; color: var(--ink-muted); font-size: 0.875rem; }
+}
+@layer components {
+  /* Picking chats for a summary: row cards with a real checkbox, tinted when chosen */
+  .pick-box { width: 22px; height: 22px; flex: none; accent-color: var(--ink); cursor: pointer; }
+  .row-card[data-on="true"] { background: color-mix(in srgb, var(--accent-butter) 40%, var(--card)); }
+  .row-card[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+}
+
+/* Cloudflare's person check (lib/auth/captcha.ts): empty for almost everyone; when Cloudflare wants a click, its box
+   sits at the bottom of the screen, above everything, until it is done. */
+.captcha-host { position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); z-index: 80; transform: translateX(-50%); max-width: calc(100vw - 32px); }

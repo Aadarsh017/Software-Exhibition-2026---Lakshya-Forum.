@@ -1,0 +1,30 @@
+# Runs on every push and pull request. Inert until this folder is pushed to GitHub.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+
+      # Safety rules and redaction, and the database security policies (no Docker needed).
+      - run: npm test
+
+      # The web app must type-check and build. These public values are placeholders for the build only.
+      - run: npm run typecheck
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_placeholder
+          NEXT_PUBLIC_APP_URL: http://localhost:3000

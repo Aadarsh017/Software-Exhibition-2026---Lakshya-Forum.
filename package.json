@@ -1,0 +1,32 @@
+{
+  "name": "health-chat-helper",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Hale (was Health Chat Helper): health, explained calmly. A calm, sourced health guide. See PLAN.md and DESIGN.md.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @hch/web",
+    "build": "npm run build -w @hch/web",
+    "typecheck": "npm run typecheck -w @hch/web && tsc -p supabase/functions/tsconfig.json",
+    "test": "npm run test:shared && npm run test:sync && npm run test:functions && npm run test:web && npm run test:db",
+    "test:shared": "npm run test -w @hch/shared",
+    "test:db": "node --test \"supabase/tests/*.test.mjs\"",
+    "supabase": "supabase",
+    "test:sync": "node scripts/sync-shared.mjs --check",
+    "test:functions": "node --test \"supabase/tests/functions/*.test.mjs\"",
+    "sync": "node scripts/sync-shared.mjs",
+    "live-check": "node scripts/live-check.mjs",
+    "test:web": "npm run test -w @hch/web"
+  },
+  "engines": {
+    "node": ">=22.18"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.10",
+    "supabase": "^2.121.0"
+  }
+}

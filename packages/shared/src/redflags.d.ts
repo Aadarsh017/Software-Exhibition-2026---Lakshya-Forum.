@@ -1,0 +1,40 @@
+export type CareLevel = "selfcare" | "doctor" | "doctor24" | "emergency" | "ambulance";
+
+export const CARE_LEVELS: readonly CareLevel[];
+
+/** Version of the rule set, stored with every answer. */
+export const RULES_VERSION: string;
+
+/** Position of a level on the five-step scale (selfcare = 0 ... ambulance = 4). -1 for null. */
+export function careRank(level: CareLevel | null | undefined): number;
+
+/** The more urgent of two levels. A level can only go up, never down. */
+export function higherCare<A extends CareLevel | null, B extends CareLevel | null>(a: A, b: B): A | B;
+
+export interface RedFlagMatch {
+  id: string;
+  level: CareLevel;
+  /** Plain-language label of the warning sign, safe to show to the user. */
+  sign: string;
+  crisis: boolean;
+  /** True for rules that need several facts together (for example baby plus fever). */
+  compound: boolean;
+  /** The phrase that matched. Never log or store this: it is the user's text. */
+  phrase: string;
+}
+
+export interface FollowUp {
+  id: string;
+  /** One question to ask when a key fact is missing. */
+  ask: string;
+}
+
+export interface RedFlagResult {
+  level: "emergency" | "ambulance" | null;
+  /** True for thoughts of suicide or self-harm: show the calm crisis flow, not the red emergency sheet. */
+  crisis: boolean;
+  matches: RedFlagMatch[];
+  followUps: FollowUp[];
+}
+
+export function checkRedFlags(input: string): RedFlagResult;

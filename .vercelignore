@@ -1,0 +1,15 @@
+# Vercel uploads only what the web app needs to build (PLAN.md §8.9): the app and the shared package, plus the
+# workspace manifests. Everything else (plans, Supabase, scripts) stays on this computer.
+/*
+!/apps
+!/packages
+!/package.json
+!/package-lock.json
+
+# Never upload secrets or local builds.
+**/.env
+**/.env.*
+**/node_modules
+**/.next
+**/tsconfig.tsbuildinfo
+**/.DS_Store

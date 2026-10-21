@@ -1,0 +1,28 @@
+{
+  "name": "@hch/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Code shared by the web app and the Edge Functions: red-flag rules, redaction, consent and blood-test markers.",
+  "exports": {
+    "./redflags": {
+      "types": "./src/redflags.d.ts",
+      "default": "./src/redflags.js"
+    },
+    "./pii": {
+      "types": "./src/pii.d.ts",
+      "default": "./src/pii.js"
+    },
+    "./consent": {
+      "types": "./src/consent.d.ts",
+      "default": "./src/consent.js"
+    },
+    "./labs": {
+      "types": "./src/labs.d.ts",
+      "default": "./src/labs.js"
+    }
+  },
+  "scripts": {
+    "test": "node --test \"tests/*.test.mjs\""
+  }
+}
